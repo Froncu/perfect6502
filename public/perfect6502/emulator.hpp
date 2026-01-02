@@ -1,8 +1,7 @@
 #ifndef EMULATOR_HPP
 #define EMULATOR_HPP
 
-#include <array>
-#include <cstdint>
+#include "pch.hpp"
 
 namespace p6502
 {
