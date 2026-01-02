@@ -195,6 +195,10 @@ initAndResetChip(void)
 
 	cycle = 0;
 
+   /* run through the initial reset sequence */
+   for (int i = 0; i < 17; ++i)
+      step(state);
+
 	return state;
 }
 
