@@ -8,7 +8,7 @@ namespace p6502
    class Emulator final
    {
       public:
-         Emulator();
+         explicit Emulator(Memory initial_memory = {}, std::optional<ProgramCounter> program_start = {});
          Emulator(Emulator const&) = delete;
          Emulator(Emulator&&) = delete;
 
@@ -18,6 +18,7 @@ namespace p6502
          Emulator& operator=(Emulator&&) = delete;
 
          void reset();
+         void half_step();
          void step();
 
          [[nodiscard]] Cycle cycle() const;
@@ -32,7 +33,7 @@ namespace p6502
          [[nodiscard]] Memory& memory();
 
       private:
-         void* state_;
+         void* state_ = nullptr;
    };
 }
 

@@ -3,9 +3,20 @@
 
 namespace p6502
 {
-   Emulator::Emulator()
-      : state_{ initAndResetChip() }
+   Emulator::Emulator(Memory initial_memory, std::optional<ProgramCounter> const program_start)
    {
+      memory() = std::move(initial_memory);
+      Data const reset_vector_low = memory()[0xFFFC];
+      Data const reset_vector_high = memory()[0xFFFD];
+      if (program_start)
+      {
+         memory()[0xFFFC] = *program_start & 0xFF;
+         memory()[0xFFFD] = *program_start >> 8;
+      }
+
+      state_ = initAndResetChip();
+      memory()[0xFFFC] = reset_vector_low;
+      memory()[0xFFFD] = reset_vector_high;
    }
 
    Emulator::~Emulator()
@@ -19,14 +30,20 @@ namespace p6502
       state_ = initAndResetChip();
    }
 
-   void Emulator::step()
+   void Emulator::half_step()
    {
       ::step(state_);
    }
 
+   void Emulator::step()
+   {
+      half_step();
+      half_step();
+   }
+
    Cycle Emulator::cycle() const
    {
-      return ::cycle;
+      return (::cycle + 1) >> 1;
    }
 
    ProgramCounter Emulator::program_counter() const

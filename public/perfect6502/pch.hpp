@@ -4,5 +4,6 @@
 #include <array>
 #include <cstdint>
 #include <limits>
+#include <optional>
 
 #endif
