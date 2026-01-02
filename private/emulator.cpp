@@ -1,56 +1,71 @@
-#include <perfect6502.h>
-
+#include "perfect6502.h"
 #include "perfect6502/emulator.hpp"
 
 namespace p6502
 {
-    Emulator::Emulator()
-        : state{ initAndResetChip() }
-    {
-    }
+   Emulator::Emulator()
+      : state_{ initAndResetChip() }
+   {
+   }
 
-    Emulator::~Emulator()
-    {
-        destroyChip(state);
-    }
+   Emulator::~Emulator()
+   {
+      destroyChip(state_);
+   }
 
-    void Emulator::step()
-    {
-        ::step(state);
-    }
+   void Emulator::reset()
+   {
+      destroyChip(state_);
+      state_ = initAndResetChip();
+   }
 
-    std::uint16_t Emulator::program_counter() const
-    {
-        return readPC(state);
-    }
+   void Emulator::step()
+   {
+      ::step(state_);
+   }
 
-    std::uint8_t Emulator::accumulator() const
-    {
-        return readA(state);
-    }
+   Cycle Emulator::cycle() const
+   {
+      return ::cycle;
+   }
 
-    std::uint8_t Emulator::x() const
-    {
-        return readX(state);
-    }
+   ProgramCounter Emulator::program_counter() const
+   {
+      return readPC(state_);
+   }
 
-    std::uint8_t Emulator::y() const
-    {
-        return readY(state);
-    }
+   Accumulator Emulator::accumulator() const
+   {
+      return readA(state_);
+   }
 
-    std::uint8_t Emulator::stack_pointer() const
-    {
-        return readSP(state);
-    }
+   Index Emulator::x() const
+   {
+      return readX(state_);
+   }
 
-    std::uint8_t Emulator::processor_status() const
-    {
-        return readP(state);
-    }
+   Index Emulator::y() const
+   {
+      return readY(state_);
+   }
 
-    std::array<std::uint8_t, 65536>& Emulator::memory()
-    {
-        return reinterpret_cast<std::array<std::uint8_t, 65536>&>(::memory);
-    }
+   StackPointer Emulator::stack_pointer() const
+   {
+      return readSP(state_);
+   }
+
+   ProcessorStatus Emulator::processor_status() const
+   {
+      return readP(state_);
+   }
+
+   Memory const& Emulator::memory() const
+   {
+      return reinterpret_cast<Memory const&>(::memory);
+   }
+
+   Memory& Emulator::memory()
+   {
+      return reinterpret_cast<Memory&>(::memory);
+   }
 }

@@ -1,35 +1,39 @@
 #ifndef EMULATOR_HPP
 #define EMULATOR_HPP
 
-#include "pch.hpp"
+#include "types.hpp"
 
 namespace p6502
 {
-    class Emulator final
-    {
-        public:
-            Emulator();
-            Emulator(const Emulator&) = delete;
-            Emulator(Emulator&&) = delete;
+   class Emulator final
+   {
+      public:
+         Emulator();
+         Emulator(Emulator const&) = delete;
+         Emulator(Emulator&&) = delete;
 
-            ~Emulator();
+         ~Emulator();
 
-            Emulator& operator=(const Emulator&) = delete;
-            Emulator& operator=(Emulator&&) = delete;
+         Emulator& operator=(Emulator const&) = delete;
+         Emulator& operator=(Emulator&&) = delete;
 
-            void step();
-            [[nodiscard]] std::uint16_t program_counter() const;
-            [[nodiscard]] std::uint8_t accumulator() const;
-            [[nodiscard]] std::uint8_t x() const;
-            [[nodiscard]] std::uint8_t y() const;
-            [[nodiscard]] std::uint8_t stack_pointer() const;
-            [[nodiscard]] std::uint8_t processor_status() const;
+         void reset();
+         void step();
 
-            [[nodiscard]] std::array<std::uint8_t, 65536>& memory();
+         [[nodiscard]] Cycle cycle() const;
+         [[nodiscard]] ProgramCounter program_counter() const;
+         [[nodiscard]] Accumulator accumulator() const;
+         [[nodiscard]] Index x() const;
+         [[nodiscard]] Index y() const;
+         [[nodiscard]] StackPointer stack_pointer() const;
+         [[nodiscard]] ProcessorStatus processor_status() const;
 
-        private:
-            void* state;
-    };
+         [[nodiscard]] Memory const& memory() const;
+         [[nodiscard]] Memory& memory();
+
+      private:
+         void* state_;
+   };
 }
 
 #endif
