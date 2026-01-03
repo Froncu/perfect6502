@@ -8,7 +8,8 @@ namespace p6502
    class Emulator final
    {
       public:
-         explicit Emulator(Memory initial_memory = {}, std::optional<ProgramCounter> program_start = {});
+         explicit Emulator(std::optional<Memory> const& initial_memory = std::nullopt,
+            std::optional<ProgramCounter> program_start = std::nullopt);
          Emulator(Emulator const&) = delete;
          Emulator(Emulator&&) = delete;
 
@@ -17,7 +18,8 @@ namespace p6502
          Emulator& operator=(Emulator const&) = delete;
          Emulator& operator=(Emulator&&) = delete;
 
-         void reset();
+         void reset(std::optional<Memory> const& initial_memory = std::nullopt,
+            std::optional<ProgramCounter> program_start = std::nullopt);
          void half_step();
          void step();
 

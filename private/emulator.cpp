@@ -3,9 +3,22 @@
 
 namespace p6502
 {
-   Emulator::Emulator(Memory initial_memory, std::optional<ProgramCounter> const program_start)
+   Emulator::Emulator(std::optional<Memory> const& initial_memory, std::optional<ProgramCounter> const program_start)
    {
-      memory() = std::move(initial_memory);
+      reset(initial_memory, program_start);
+   }
+
+   Emulator::~Emulator()
+   {
+      if (state_)
+         destroyChip(state_);
+   }
+
+   void Emulator::reset(std::optional<Memory> const& initial_memory, std::optional<ProgramCounter> const program_start)
+   {
+      if (initial_memory)
+         memory() = std::move(*initial_memory);
+
       Data const reset_vector_low = memory()[0xFFFC];
       Data const reset_vector_high = memory()[0xFFFD];
       if (program_start)
@@ -14,20 +27,12 @@ namespace p6502
          memory()[0xFFFD] = *program_start >> 8;
       }
 
+      if (state_)
+         destroyChip(state_);
+
       state_ = initAndResetChip();
       memory()[0xFFFC] = reset_vector_low;
       memory()[0xFFFD] = reset_vector_high;
-   }
-
-   Emulator::~Emulator()
-   {
-      destroyChip(state_);
-   }
-
-   void Emulator::reset()
-   {
-      destroyChip(state_);
-      state_ = initAndResetChip();
    }
 
    void Emulator::half_step()
@@ -43,6 +48,7 @@ namespace p6502
 
    Cycle Emulator::cycle() const
    {
+      // NOTE: perfect6502's `cycle` variable is actually a half-cycle
       return (::cycle + 1) >> 1;
    }
 
